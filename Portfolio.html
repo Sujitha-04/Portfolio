@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sujitha Chittiprolu — Software Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0a0a0f; --surface:#12121a; --surface2:#1a1a26;
+    --accent:#c8a96e; --accent2:#7eb8d4; --accent3:#a084c8;
+    --text:#e8e6f0; --text-muted:#8a8899;
+    --border:rgba(200,169,110,0.15);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:'Cabinet Grotesk',sans-serif;overflow-x:hidden;cursor:none;}
+
+  /* ── DIAMOND CURSOR ── */
+  #cur-main{
+    position:fixed;width:14px;height:14px;background:#c8a96e;
+    pointer-events:none;z-index:999999;
+    left:-100px;top:-100px;
+    transform:translate(-50%,-50%) rotate(45deg);
+    box-shadow:0 0 10px rgba(200,169,110,0.9),0 0 24px rgba(200,169,110,0.45);
+    transition:width .15s,height .15s,background .15s,opacity .3s;
+    opacity:0;
+  }
+  #cur-main.on{opacity:1;}
+  #cur-main.big{width:21px;height:21px;background:#fff6e0;box-shadow:0 0 18px rgba(200,169,110,1),0 0 42px rgba(200,169,110,0.55);}
+  #cur-ring{
+    position:fixed;width:40px;height:40px;
+    border:1.5px solid rgba(200,169,110,0.5);
+    pointer-events:none;z-index:999998;
+    left:-100px;top:-100px;
+    transform:translate(-50%,-50%) rotate(45deg);
+    transition:width .3s,height .3s,border-color .3s,opacity .3s;
+    opacity:0;
+  }
+  #cur-ring.on{opacity:1;}
+  #cur-ring.big{width:54px;height:54px;border-color:rgba(200,169,110,0.8);}
+  .spark{position:fixed;pointer-events:none;z-index:999997;}
+
+  /* ── NOISE ── */
+  body::before{
+    content:'';position:fixed;inset:0;pointer-events:none;z-index:9000;opacity:.4;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+
+  /* ── NAV ── */
+  nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;justify-content:space-between;align-items:center;padding:1.5rem 4rem;background:rgba(10,10,15,0.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+  .nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;font-style:italic;letter-spacing:.1em;color:var(--accent);}
+  .nav-links{display:flex;gap:2.5rem;list-style:none;}
+  .nav-links a{color:var(--text-muted);text-decoration:none;font-size:.78rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;transition:color .3s;position:relative;}
+  .nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:1px;background:var(--accent);transform:scaleX(0);transition:transform .3s ease;}
+  .nav-links a:hover{color:var(--accent);}
+  .nav-links a:hover::after{transform:scaleX(1);}
+
+  /* ── HERO ── */
+  .hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;position:relative;overflow:hidden;}
+  .hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 80% 50%,rgba(200,169,110,.07) 0%,transparent 70%),radial-gradient(ellipse 40% 60% at 20% 80%,rgba(126,184,212,.05) 0%,transparent 60%);}
+  .grid-lines{position:absolute;inset:0;background-image:linear-gradient(rgba(200,169,110,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(200,169,110,.04) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 80% at center,black 30%,transparent 80%);}
+  .hero-left{display:flex;flex-direction:column;justify-content:center;padding:8rem 4rem 4rem;position:relative;z-index:2;}
+  .hero-right{display:flex;flex-direction:column;justify-content:center;align-items:center;padding:8rem 4rem 4rem;position:relative;z-index:2;}
+
+  .hero-eyebrow{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--accent);letter-spacing:.25em;text-transform:uppercase;margin-bottom:1.5rem;display:flex;align-items:center;gap:1rem;animation:fadeUp .8s .2s both;}
+  .hero-eyebrow::before{content:'';width:40px;height:1px;background:var(--accent);}
+  .hero-name{font-family:'Cormorant Garamond',serif;font-size:clamp(3.5rem,6vw,5.5rem);font-weight:300;line-height:1.05;letter-spacing:-.02em;margin-bottom:.3rem;animation:fadeUp .8s .4s both;}
+  .hero-name span{display:block;font-style:italic;color:var(--accent);}
+  .hero-title{font-family:'DM Mono',monospace;font-size:.85rem;color:var(--accent2);letter-spacing:.1em;margin-bottom:2rem;margin-top:.5rem;animation:fadeUp .8s .5s both;}
+  .hero-bio{font-size:1rem;color:var(--text-muted);line-height:1.75;max-width:480px;margin-bottom:3rem;animation:fadeUp .8s .6s both;}
+  .hero-ctas{display:flex;gap:1rem;flex-wrap:wrap;animation:fadeUp .8s .7s both;}
+  .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;width:100%;max-width:420px;animation:fadeUp .8s .8s both;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+  .stat-card{background:var(--surface);border:1px solid var(--border);padding:1.75rem;position:relative;overflow:hidden;transition:transform .3s,border-color .3s;}
+  .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);}
+  .stat-card:hover{transform:translateY(-4px);border-color:rgba(200,169,110,.4);}
+  .stat-number{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:var(--accent);line-height:1;margin-bottom:.5rem;}
+  .stat-label{font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;font-weight:500;}
+
+  .scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.5rem;color:var(--text-muted);font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;z-index:10;animation:bob 2s infinite;}
+  .scroll-hint::after{content:'';width:1px;height:40px;background:linear-gradient(to bottom,var(--accent),transparent);}
+  @keyframes bob{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(6px);}}
+
+  /* ── BUTTONS ── */
+  .btn-primary{display:inline-block;padding:.85rem 2rem;background:var(--accent);color:var(--bg);font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border:none;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:background .3s,transform .3s;}
+  .btn-primary:hover{background:#e0c07e;transform:translateY(-2px);}
+  .btn-outline{display:inline-block;padding:.85rem 2rem;background:transparent;color:var(--text-muted);font-size:.78rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border:1px solid var(--border);clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:all .3s;}
+  .btn-outline:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);}
+
+  /* ── SECTION ── */
+  section{position:relative;z-index:2;}
+  .section-header{text-align:center;margin-bottom:4rem;}
+  .section-label{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--accent);letter-spacing:.3em;text-transform:uppercase;margin-bottom:1rem;display:block;}
+  .section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,4vw,3.5rem);font-weight:300;letter-spacing:-.02em;}
+  .section-title em{font-style:italic;color:var(--accent);}
+
+  /* ── SKILLS ── */
+  #skills{padding:7rem 4rem;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+  .skills-layout{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;}
+  .skill-group{background:var(--bg);border:1px solid var(--border);padding:2rem;position:relative;transition:transform .3s;}
+  .skill-group:hover{transform:translateY(-4px);}
+  .skill-group::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);opacity:0;transition:opacity .3s;}
+  .skill-group:hover::after{opacity:1;}
+  .skill-group-icon{font-size:1.5rem;margin-bottom:1rem;}
+  .skill-group-title{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--accent);letter-spacing:.2em;text-transform:uppercase;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid var(--border);}
+  .skill-tags{display:flex;flex-wrap:wrap;gap:.5rem;}
+  .skill-tag{padding:.3rem .75rem;background:var(--surface2);border:1px solid var(--border);font-size:.72rem;color:var(--text-muted);font-family:'DM Mono',monospace;transition:all .2s;}
+  .skill-tag:hover{background:rgba(200,169,110,.1);color:var(--accent);border-color:rgba(200,169,110,.4);}
+
+  /* ── EXPERIENCE ── */
+  #experience{padding:7rem 4rem;}
+  .exp-inner{max-width:1100px;margin:0 auto;}
+  .timeline{position:relative;}
+  .timeline::before{content:'';position:absolute;left:180px;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,var(--border),var(--border),transparent);}
+  .timeline-item{display:grid;grid-template-columns:180px 1fr;gap:3rem;margin-bottom:4rem;position:relative;}
+  .timeline-item::before{content:'';position:absolute;left:175px;top:8px;width:11px;height:11px;background:var(--accent);border-radius:50%;border:2px solid var(--bg);box-shadow:0 0 0 3px rgba(200,169,110,.2);}
+  .timeline-date{text-align:right;padding-top:.2rem;}
+  .timeline-date-text{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--accent);letter-spacing:.1em;display:block;margin-bottom:.3rem;}
+  .timeline-company{font-size:.75rem;color:var(--text-muted);font-weight:500;}
+  .timeline-location{font-size:.68rem;color:var(--text-muted);opacity:.6;font-family:'DM Mono',monospace;}
+  .timeline-content{background:var(--surface);border:1px solid var(--border);padding:2rem;transition:border-color .3s;}
+  .timeline-content:hover{border-color:rgba(200,169,110,.3);}
+  .timeline-role{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;margin-bottom:.25rem;}
+  .timeline-subtitle{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--accent2);letter-spacing:.1em;margin-bottom:1.25rem;}
+  .timeline-achievements{list-style:none;}
+  .timeline-achievements li{font-size:.875rem;color:var(--text-muted);line-height:1.65;padding:.4rem 0 .4rem 1.2rem;position:relative;border-bottom:1px solid rgba(255,255,255,.03);}
+  .timeline-achievements li:last-child{border-bottom:none;}
+  .timeline-achievements li::before{content:'▸';position:absolute;left:0;color:var(--accent);font-size:.65rem;top:.5rem;}
+  .highlight{color:var(--accent);font-weight:500;}
+
+  /* ── PROJECTS ── */
+  #projects{padding:7rem 4rem;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+  .projects-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;}
+  .project-card{background:var(--bg);border:1px solid var(--border);padding:2rem;position:relative;overflow:hidden;transition:all .3s;display:flex;flex-direction:column;}
+  .project-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent3));}
+  .project-card:hover{transform:translateY(-6px);border-color:rgba(200,169,110,.35);box-shadow:0 20px 60px rgba(0,0,0,.4);}
+  .project-number{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:rgba(200,169,110,.1);position:absolute;top:1rem;right:1.5rem;line-height:1;}
+  .project-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:400;margin-bottom:.75rem;line-height:1.2;}
+  .project-desc{font-size:.83rem;color:var(--text-muted);line-height:1.7;margin-bottom:1.5rem;flex:1;}
+  .project-stack{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.5rem;}
+  .stack-tag{font-family:'DM Mono',monospace;font-size:.63rem;padding:.25rem .6rem;background:rgba(200,169,110,.08);border:1px solid rgba(200,169,110,.2);color:var(--accent);letter-spacing:.05em;}
+  .project-link{display:inline-flex;align-items:center;gap:.5rem;font-size:.73rem;color:var(--text-muted);text-decoration:none;font-family:'DM Mono',monospace;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--border);padding:.5rem 1rem;width:fit-content;opacity:.6;transition:all .3s;}
+  .project-link.disabled{cursor:not-allowed;}
+  .coming-soon{font-size:.6rem;background:rgba(200,169,110,.15);padding:.15rem .4rem;color:var(--accent);}
+
+  /* ── EDUCATION ── */
+  #education{padding:7rem 4rem;max-width:1100px;margin:0 auto;}
+  .edu-card{background:var(--surface);border:1px solid var(--border);padding:3rem;display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:center;position:relative;overflow:hidden;}
+  .edu-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(to bottom,var(--accent),var(--accent3));}
+  .edu-degree{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:400;margin-bottom:.5rem;}
+  .edu-school{font-size:.9rem;color:var(--accent2);margin-bottom:.3rem;font-weight:500;}
+  .edu-location{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text-muted);letter-spacing:.1em;}
+  .edu-year{font-family:'Cormorant Garamond',serif;font-size:3.5rem;font-weight:300;color:rgba(200,169,110,.2);white-space:nowrap;}
+
+  /* ── CONTACT ── */
+  #contact{padding:7rem 4rem;background:var(--surface);border-top:1px solid var(--border);text-align:center;}
+  .contact-inner{max-width:600px;margin:0 auto;}
+  .contact-tagline{font-family:'Cormorant Garamond',serif;font-size:clamp(1.5rem,3vw,2.2rem);font-weight:300;font-style:italic;color:var(--text-muted);margin-bottom:1rem;}
+  .contact-email{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4vw,3rem);font-weight:300;color:var(--accent);text-decoration:none;display:block;margin-bottom:1rem;transition:opacity .3s;}
+  .contact-email:hover{opacity:.8;}
+  .contact-phone{font-family:'DM Mono',monospace;font-size:.85rem;color:var(--text-muted);letter-spacing:.1em;margin-bottom:2.5rem;}
+  .contact-divider{width:60px;height:1px;background:var(--border);margin:2rem auto;}
+
+  /* ── FOOTER ── */
+  footer{padding:2rem 4rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+  .footer-copy{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-muted);letter-spacing:.1em;}
+  .footer-tag{font-family:'DM Mono',monospace;font-size:.65rem;color:rgba(200,169,110,.4);letter-spacing:.1em;}
+
+  /* ── SCROLL REVEAL ── */
+  .reveal{transition:opacity .65s ease,transform .65s ease;}
+  .reveal.hidden{opacity:0;transform:translateY(28px);}
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:900px){
+    nav{padding:1.25rem 2rem;}
+    .nav-links{display:none;}
+    .hero{grid-template-columns:1fr;}
+    .hero-right{display:none;}
+    .hero-left{padding:6rem 2rem 3rem;}
+    #skills{padding:4rem 2rem;}
+    .skills-layout{grid-template-columns:1fr;}
+    #experience{padding:4rem 2rem;}
+    .exp-inner{padding:0;}
+    .timeline::before{display:none;}
+    .timeline-item{grid-template-columns:1fr;gap:.75rem;}
+    .timeline-item::before{display:none;}
+    .timeline-date{text-align:left;}
+    #projects{padding:4rem 2rem;}
+    .projects-grid{grid-template-columns:1fr;}
+    #education{padding:4rem 2rem;}
+    .edu-card{grid-template-columns:1fr;}
+    .edu-year{display:none;}
+    #contact{padding:4rem 2rem;}
+    footer{flex-direction:column;gap:.5rem;text-align:center;padding:1.5rem 2rem;}
+  }
+</style>
+</head>
+<body>
+
+<div id="cur-main"></div>
+<div id="cur-ring"></div>
+
+<nav>
+  <div class="nav-logo">Sujitha CH.</div>
+  <ul class="nav-links">
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="grid-lines"></div>
+  <div class="hero-left">
+    <div class="hero-eyebrow">Available for Opportunities</div>
+    <h1 class="hero-name">Sujitha<span>Chittiprolu</span></h1>
+    <div class="hero-title">// Software Developer &nbsp;·&nbsp; Full-Stack &nbsp;·&nbsp; Cloud</div>
+    <p class="hero-bio">Building secure, enterprise-grade applications with 3+ years of experience across Java, Spring Boot, React, AWS, and distributed systems. Passionate about crafting scalable software that solves real problems.</p>
+    <div class="hero-ctas">
+      <a href="#experience" class="btn-primary">View Experience</a>
+      <a href="#contact" class="btn-outline">Get in Touch</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-number">3+</div><div class="stat-label">Years Experience</div></div>
+      <div class="stat-card"><div class="stat-number">15+</div><div class="stat-label">Technologies</div></div>
+      <div class="stat-card"><div class="stat-number">3</div><div class="stat-label">Academic Projects</div></div>
+      <div class="stat-card"><div class="stat-number">99%</div><div class="stat-label">Test Reliability</div></div>
+    </div>
+  </div>
+  <div class="scroll-hint">scroll</div>
+</section>
+
+<section id="skills">
+  <div class="section-header"><span class="section-label">Technical Expertise</span><h2 class="section-title">Skills &amp; <em>Technologies</em></h2></div>
+  <div class="skills-layout">
+    <div class="skill-group reveal"><div class="skill-group-icon">⌨️</div><div class="skill-group-title">Languages</div><div class="skill-tags"><span class="skill-tag">Java</span><span class="skill-tag">JavaScript</span><span class="skill-tag">TypeScript</span><span class="skill-tag">Python</span></div></div>
+    <div class="skill-group reveal"><div class="skill-group-icon">🧩</div><div class="skill-group-title">Frameworks</div><div class="skill-tags"><span class="skill-tag">Spring Boot</span><span class="skill-tag">React.js</span><span class="skill-tag">Angular</span><span class="skill-tag">Node.js</span><span class="skill-tag">Express.js</span><span class="skill-tag">Hibernate</span><span class="skill-tag">REST APIs</span><span class="skill-tag">Microservices</span></div></div>
+    <div class="skill-group reveal"><div class="skill-group-icon">🗄️</div><div class="skill-group-title">Databases</div><div class="skill-tags"><span class="skill-tag">PostgreSQL</span><span class="skill-tag">MySQL</span><span class="skill-tag">MongoDB</span><span class="skill-tag">Oracle</span><span class="skill-tag">SQL</span></div></div>
+    <div class="skill-group reveal"><div class="skill-group-icon">☁️</div><div class="skill-group-title">Cloud &amp; DevOps</div><div class="skill-tags"><span class="skill-tag">AWS EC2</span><span class="skill-tag">AWS S3</span><span class="skill-tag">Lambda</span><span class="skill-tag">Jenkins</span><span class="skill-tag">GitLab CI/CD</span><span class="skill-tag">Docker</span></div></div>
+    <div class="skill-group reveal"><div class="skill-group-icon">🔧</div><div class="skill-group-title">Tools &amp; Testing</div><div class="skill-tags"><span class="skill-tag">JUnit</span><span class="skill-tag">Mockito</span><span class="skill-tag">Selenium</span><span class="skill-tag">Maven</span><span class="skill-tag">Gradle</span><span class="skill-tag">Git/GitHub</span><span class="skill-tag">IntelliJ</span></div></div>
+    <div class="skill-group reveal"><div class="skill-group-icon">📋</div><div class="skill-group-title">Methodologies</div><div class="skill-tags"><span class="skill-tag">Agile / Scrum</span><span class="skill-tag">JIRA</span><span class="skill-tag">RabbitMQ</span><span class="skill-tag">Linux / CLI</span><span class="skill-tag">Code Review</span></div></div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="section-header"><span class="section-label">Career Journey</span><h2 class="section-title">Work <em>Experience</em></h2></div>
+  <div class="exp-inner">
+    <div class="timeline">
+
+      <div class="timeline-item reveal">
+        <div class="timeline-date">
+          <span class="timeline-date-text">Mar 2025 — Present</span>
+          <div class="timeline-company">Jabil</div>
+          <div class="timeline-location">Florence, KY</div>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-role">Software Engineer</div>
+          <div class="timeline-subtitle">// Backend Systems · Diagnostics · Real-time Monitoring</div>
+          <ul class="timeline-achievements">
+            <li>Diagnosed complex backend issues across multi-stage environments, reducing resolution time by <span class="highlight">30%</span></li>
+            <li>Built internal real-time monitoring dashboard reducing manual tracking by <span class="highlight">40%</span></li>
+            <li>Maintained <span class="highlight">99%+</span> test execution reliability across distributed software components</li>
+            <li>Leveraged Linux CLI for log tracing, performance monitoring, and proactive bottleneck identification</li>
+            <li>Documented root cause findings reducing repeat incidents by <span class="highlight">20%</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-date">
+          <span class="timeline-date-text">Mar 2024 — Mar 2025</span>
+          <div class="timeline-company">Le Mans Corporation</div>
+          <div class="timeline-location">Cincinnati, OH</div>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-role">Software Developer</div>
+          <div class="timeline-subtitle">// Full-Stack · AWS · Microservices</div>
+          <ul class="timeline-achievements">
+            <li>Developed full-stack apps with React.js, Node.js, and Spring Boot improving responsiveness by <span class="highlight">30%</span></li>
+            <li>Designed AWS cloud-native solutions (EC2, S3, Lambda), scaling systems by <span class="highlight">40%</span> and reducing costs by <span class="highlight">15%</span></li>
+            <li>Migrated legacy monolith to microservices enabling faster deployments and compliance reporting</li>
+            <li>Built event-driven microservices with RabbitMQ for real-time processing</li>
+            <li>Optimized PostgreSQL queries cutting execution time by <span class="highlight">25%</span>; led Agile ceremonies boosting productivity by <span class="highlight">20%</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-date">
+          <span class="timeline-date-text">Jan 2020 — Jul 2022</span>
+          <div class="timeline-company">Novitas Technologies</div>
+          <div class="timeline-location">Bangalore, India</div>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-role">Software Developer</div>
+          <div class="timeline-subtitle">// SDLC · React · Spring Boot · PostgreSQL</div>
+          <ul class="timeline-achievements">
+            <li>Delivered end-to-end SDLC from requirements analysis through deployment under Waterfall methodology</li>
+            <li>Built responsive front-end apps with React.js, JavaScript, HTML &amp; CSS with cross-browser compatibility</li>
+            <li>Improved database performance by <span class="highlight">30%</span> via stored procedure optimization, triggers, and indexing</li>
+            <li>Built REST APIs and microservices with Spring Boot and Node.js for distributed systems</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="section-header"><span class="section-label">Selected Work</span><h2 class="section-title">Academic <em>Projects</em></h2></div>
+  <div class="projects-grid">
+
+    <div class="project-card reveal">
+      <div class="project-number">01</div>
+      <h3 class="project-title">Logic Coverage</h3>
+      <p class="project-desc">Full-stack application enabling predicate, combinatorial, and active clause coverage testing. Features dynamic truth table generation and secure session management via MongoDB Cloud.</p>
+      <div class="project-stack"><span class="stack-tag">React.js</span><span class="stack-tag">Express.js</span><span class="stack-tag">MongoDB</span><span class="stack-tag">AWS EC2</span><span class="stack-tag">Selenium</span></div>
+      <!-- <a class="project-link disabled"><span>GitHub</span><span class="coming-soon">Coming Soon</span></a> -->
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-number">02</div>
+      <h3 class="project-title">Tracker Hub</h3>
+      <p class="project-desc">Full-stack academic management platform with role-based access for Admins, Professors, and Students. Handles assignments, submissions, evaluations, and enrollment workflows.</p>
+      <div class="project-stack"><span class="stack-tag">Java</span><span class="stack-tag">Spring Boot</span><span class="stack-tag">MongoDB</span><span class="stack-tag">AWS</span><span class="stack-tag">JavaScript</span></div>
+      <!-- <a class="project-link disabled"><span>GitHub</span><span class="coming-soon">Coming Soon</span></a> -->
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-number">03</div>
+      <h3 class="project-title">Confidential Security System</h3>
+      <p class="project-desc">Secure credential manager with multi-factor authentication, bank data vaults, and multimedia storage. Sub-3-second response times with 99.99% availability.</p>
+      <div class="project-stack"><span class="stack-tag">Angular 7+</span><span class="stack-tag">Spring Boot</span><span class="stack-tag">MySQL</span><span class="stack-tag">Bootstrap</span><span class="stack-tag">MFA</span></div>
+      <!-- <a class="project-link disabled"><span>GitHub</span><span class="coming-soon">Coming Soon</span></a> -->
+    </div>
+
+  </div>
+</section>
+
+<section id="education">
+  <div class="section-header"><span class="section-label">Academic Background</span><h2 class="section-title">Edu<em>cation</em></h2></div>
+  <div class="edu-card reveal">
+    <div>
+      <div class="edu-degree">Master of Science in Computer Science</div>
+      <div class="edu-school">University at Albany, State University of New York (SUNY)</div>
+      <div class="edu-location">Albany, NY &nbsp;·&nbsp; May 2024</div>
+    </div>
+    <div class="edu-year">2024</div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="contact-inner">
+    <div class="section-header"><span class="section-label">Let's Connect</span><h2 class="section-title">Get in <em>Touch</em></h2></div>
+    <p class="contact-tagline">Open to new opportunities &amp; relocation</p>
+    <a href="mailto:chsujitha12@gmail.com" class="contact-email">chsujitha12@gmail.com</a>
+    <div class="contact-phone">+1 518 545 8528</div>
+    <div class="contact-divider"></div>
+    <a href="mailto:chsujitha12@gmail.com" class="btn-primary" style="display:inline-block">Send a Message</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-copy">© 2026 Sujitha Chittiprolu. All rights reserved.</div>
+  <div class="footer-tag">// Software Developer · United States</div>
+</footer>
+
+<script>
+/* ═══════════════════════════════
+   DIAMOND CURSOR + SPARKLE TRAIL
+═══════════════════════════════ */
+(function(){
+  var M = document.getElementById('cur-main');
+  var R = document.getElementById('cur-ring');
+  var mx=0,my=0,rx=0,ry=0,px=0,py=0,lastT=0,ready=false;
+
+  document.addEventListener('mousemove',function(e){
+    mx=e.clientX; my=e.clientY;
+    if(!ready){
+      ready=true; rx=mx; ry=my;
+      M.classList.add('on');
+      R.classList.add('on');
+    }
+    /* snap main diamond to cursor */
+    M.style.left=mx+'px';
+    M.style.top=my+'px';
+    /* sparkles */
+    var spd=Math.hypot(mx-px,my-py); px=mx; py=my;
+    var now=Date.now();
+    if(now-lastT > Math.max(14,46-spd*1.3)){
+      spark(mx,my,spd); lastT=now;
+    }
+  });
+
+  /* lag ring follows */
+  (function loop(){
+    rx+=(mx-rx)*0.1; ry+=(my-ry)*0.1;
+    R.style.left=rx+'px'; R.style.top=ry+'px';
+    requestAnimationFrame(loop);
+  })();
+
+  /* hover grow */
+  document.addEventListener('mouseover',function(e){
+    if(e.target.closest('a,button')){M.classList.add('big');R.classList.add('big');}
+  });
+  document.addEventListener('mouseout',function(e){
+    if(e.target.closest('a,button')){M.classList.remove('big');R.classList.remove('big');}
+  });
+
+  /* sparkle */
+  var C=[[200,169,110],[200,169,110],[200,169,110],[255,245,210],[126,184,212],[180,140,220],[255,255,255]];
+  function spark(x,y,spd){
+    var el=document.createElement('div');
+    el.className='spark';
+    var sz=2.5+Math.random()*5;
+    var dur=360+Math.random()*400;
+    var ang=Math.random()*Math.PI*2;
+    var d=10+Math.random()*24+Math.min(spd*.5,16);
+    var rot=Math.random()*360;
+    var c=C[Math.floor(Math.random()*C.length)];
+    el.style.cssText='width:'+sz+'px;height:'+sz+'px;left:'+x+'px;top:'+y+'px;'
+      +'background:rgba('+c[0]+','+c[1]+','+c[2]+',0.95);'
+      +'box-shadow:0 0 '+(sz*2.2)+'px rgba('+c[0]+','+c[1]+','+c[2]+',0.5);'
+      +'transform:translate(-50%,-50%) rotate('+rot+'deg);';
+    document.body.appendChild(el);
+    var tx=x+Math.cos(ang)*d, ty=y+Math.sin(ang)*d, t0=null;
+    (function frame(ts){
+      if(!t0)t0=ts;
+      var p=(ts-t0)/dur; if(p>=1){el.remove();return;}
+      var e2=1-p*p;
+      el.style.left=(x+(tx-x)*p)+'px';
+      el.style.top=(y+(ty-y)*p)+'px';
+      el.style.opacity=e2;
+      el.style.transform='translate(-50%,-50%) rotate('+(rot+p*200)+'deg) scale('+(e2*.85+.1)+')';
+      requestAnimationFrame(frame);
+    })();
+  }
+})();
+
+/* ═══════════════════════════════
+   SCROLL REVEAL
+═══════════════════════════════ */
+(function(){
+  var els=document.querySelectorAll('.reveal');
+  if(!window.IntersectionObserver) return; /* show all if no support */
+  els.forEach(function(el){el.classList.add('hidden');});
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){en.target.classList.remove('hidden');io.unobserve(en.target);}
+    });
+  },{threshold:0.07,rootMargin:'0px 0px -30px 0px'});
+  els.forEach(function(el){io.observe(el);});
+})();
+
+/* ═══════════════════════════════
+   NAV HIGHLIGHT
+═══════════════════════════════ */
+(function(){
+  var links=document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll',function(){
+    var sy=window.scrollY;
+    document.querySelectorAll('section[id]').forEach(function(s){
+      if(sy>=s.offsetTop-150){
+        links.forEach(function(a){
+          a.style.color=a.getAttribute('href')==='#'+s.id?'var(--accent)':'';
+        });
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>
